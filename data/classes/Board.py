@@ -132,3 +132,25 @@ def is_in_check(self , color, board_change=None):
         new_square.occupying_piece = new_square_old_square
 
     return output
+
+def is_in_checkmate(self, color):
+    output = False
+    for piece in [i.occupying_piece for i in self.squares]:
+        if piece != None:
+            if piece.notation == 'K' and piece.color == color:
+                king = piece
+    
+    if king.get_valid_moves(self):
+        if self.is_in_check(color):
+            output = True
+    
+    return output
+
+def draw(self, display):
+    if self.selected_piece is None:
+        self.get_square_from_pos(self.selected_piece.pos).highlight = True
+        for square in self.selected_piece.get_valid_moves(self):
+            square.highlight = True
+    
+    for square in self.squares:
+        square.draw(display)
