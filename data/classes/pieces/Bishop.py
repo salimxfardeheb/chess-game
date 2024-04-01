@@ -8,6 +8,7 @@ class Bishop(Piece):
         self.img = pygame.image.load(img_path)
         self.img = pygame.transform.scale(self.img, (board.tile_width - 20, board.tile_height - 20))
         self.notation = 'B'
+        self.square = board.get_square_from_pos(pos)
 
     def get_possible_moves(self, board):
         output = []
