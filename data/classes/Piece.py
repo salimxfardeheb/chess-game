@@ -1,4 +1,8 @@
 import pygame
+white_eat = []
+black_eat = []
+white_points = 0
+black_points = 0
 
 class Piece:
     def __init__(self, pos, color, board):
@@ -30,11 +34,22 @@ class Piece:
         return output
     
     def move(self, board, square, force=False):
+        global white_eat
+        global black_eat
+        global white_points
+        global black_points 
         for i in board.squares:
             i.highlight = False
         if square in self.get_valid_moves(board) or force:
             prev_square = board.get_square_from_pos(self.pos)
             self.pos, self.x, self.y = square.pos, square.x, square.y
+            if square.occupying_piece != None :
+                if self.color == 'white':
+                 white_eat.append(square.occupying_piece.notation)
+                 white_points = white_points + square.occupying_piece.points
+                elif self.color == 'black':
+                 black_eat.append(square.occupying_piece.notation)
+                 black_points += square.occupying_piece.points
             prev_square.occupying_piece = None
             square.occupying_piece = self
             board.selected_piece = None

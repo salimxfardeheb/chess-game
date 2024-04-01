@@ -131,44 +131,26 @@ class Board:
             new_square.occupying_piece = new_square_old_piece
         return output
     
-    def defend_piece(self, color):
-        # Vérifier si une pièce peut bloquer l'échec
-        for defending_piece in [i.occupying_piece for i in self.squares]:
-            if defending_piece != None and defending_piece.color == color:
-                # Vérifier si la pièce peut se déplacer pour bloquer l'échec
-                for move in defending_piece.get_valid_moves(self):
-                    # Simuler le déplacement pour vérifier s'il bloque l'échec
-                    old_square = defending_piece.square
-                    new_square = self.get_square(move)
-                    old_occupying_piece = new_square.occupying_piece
-                    new_square.occupying_piece = defending_piece
-                    old_square.occupying_piece = None
-                    
-                    # Vérifier si le roi n'est plus en échec après le déplacement
-                    if not self.is_in_check(color):
-                        # Restaurer l'état du plateau
-                        new_square.occupying_piece = old_occupying_piece
-                        old_square.occupying_piece = defending_piece
-                        return True
-                    
-                    # Restaurer l'état du plateau
-                    new_square.occupying_piece = old_occupying_piece
-                    old_square.occupying_piece = defending_piece
-        
-        return False
+   
+    
 
-
-    # checkmate state checker
     def is_in_checkmate(self, color):
         output = False
+        pieces = [
+            i.occupying_piece for i in self.squares if i.occupying_piece is not None
+        ]
         for piece in [i.occupying_piece for i in self.squares]:
             if piece != None:
                 if piece.notation == 'K' and piece.color == color:
                     king = piece
-        if king.get_valid_moves(self) == []: #&& defend_piece(king)==False
+        if king.get_valid_moves(self) == []: 
             if self.is_in_check(color):
-                 if self.defend_piece(color):
-                    output = True
+             output=True
+            for piece in pieces :
+                if piece.color==color:
+                    if piece.get_valid_moves(self)!=[]:
+                        output=False
+                        break
         return output
     
     def draw(self, display):
