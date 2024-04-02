@@ -160,3 +160,24 @@ class Board:
                 square.highlight = True
         for square in self.squares:
             square.draw(display)
+    
+    def Nulle(self,color):
+        output = False
+        moves_p = []
+        pieces = [
+            i.occupying_piece for i in self.squares if i.occupying_piece is not None
+        ]
+        for piece in [i.occupying_piece for i in self.squares]:
+          if piece != None:
+                if piece.notation == 'K' and piece.color == color:
+                    king = piece
+        if king.get_valid_moves(self) == []: 
+            if not(self.is_in_check(color)):
+             for piece in pieces :
+                if piece.color==color:
+                    moves_p.append(piece.get_valid_moves(self))
+            if len(moves_p) == 0:
+                output=True
+        return output
+
+        
