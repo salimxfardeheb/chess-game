@@ -1,6 +1,7 @@
 import pygame
 from data.classes.Piece import Piece
 
+
 class King(Piece):
     def __init__(self, pos, color, board):
         super().__init__(pos, color, board)
@@ -37,7 +38,7 @@ class King(Piece):
         return output
 
     def can_castle(self, board):
-        if not self.has_moved:
+        if not self.has_moved and not board.is_in_check(self.color):
             if self.color == 'white':
                 queenside_rook = board.get_piece_from_pos((0, 7))
                 kingside_rook = board.get_piece_from_pos((7, 7))

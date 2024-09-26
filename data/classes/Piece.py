@@ -60,7 +60,7 @@ class Piece:
                         board
                     )
             # Move rook if king castles
-            if self.notation == 'K':
+            if self.notation == 'K' :
                 if prev_square.x - self.x == 2:
                     rook = board.get_piece_from_pos((0, self.y))
                     rook.move(board, board.get_square_from_pos((3, self.y)), force=True)

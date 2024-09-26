@@ -7,6 +7,11 @@ from data.classes.pieces.Queen import Queen
 from data.classes.pieces.King import King
 from data.classes.pieces.Pawn import Pawn
 
+from data.classes.Piece import white_eat
+from data.classes.Piece import black_eat
+
+moves_p = []
+
 # Game state checker
 class Board:
     def __init__(self, width, height):
@@ -77,6 +82,24 @@ class Board:
                         square.occupying_piece = Pawn(
                             (x, y), 'white' if piece[0] == 'w' else 'black', self
                         )
+    def reset(self):
+        self.selected_piece = None
+        self.turn = 'white'
+        
+        self.config = [
+            ['bR', 'bN', 'bB', 'bQ', 'bK', 'bB', 'bN', 'bR'],
+            ['bP', 'bP', 'bP', 'bP', 'bP', 'bP', 'bP', 'bP'],
+            ['','','','','','','',''],
+            ['','','','','','','',''],
+            ['','','','','','','',''],
+            ['','','','','','','',''],
+            ['wP', 'wP', 'wP', 'wP', 'wP', 'wP', 'wP', 'wP'],
+            ['wR', 'wN', 'wB', 'wQ', 'wK', 'wB', 'wN', 'wR'],
+        ]
+        self.squares = self.generate_squares()
+        self.setup_board()
+        white_eat.clear()
+        black_eat.clear()
 
     def handle_click(self, mx, my):
         x = mx // self.tile_width
@@ -131,9 +154,6 @@ class Board:
             new_square.occupying_piece = new_square_old_piece
         return output
     
-   
-    
-
     def is_in_checkmate(self, color):
         output = False
         pieces = [
@@ -145,7 +165,7 @@ class Board:
                     king = piece
         if king.get_valid_moves(self) == []: 
             if self.is_in_check(color):
-             output=True
+                output = True
             for piece in pieces :
                 if piece.color==color:
                     if piece.get_valid_moves(self)!=[]:
@@ -162,22 +182,123 @@ class Board:
             square.draw(display)
     
     def Nulle(self,color):
-        output = False
-        moves_p = []
         pieces = [
             i.occupying_piece for i in self.squares if i.occupying_piece is not None
-        ]
-        for piece in [i.occupying_piece for i in self.squares]:
-          if piece != None:
-                if piece.notation == 'K' and piece.color == color:
+         ]
+        if len(pieces) == 2:
+                return True
+        elif len(pieces) == 3:
+            for piece in pieces :
+                if piece.notation== 'B' or piece.notation== 'N':
+                    return True
+        else:
+         for piece in [i.occupying_piece for i in self.squares]:
+           if piece != None:
+                 if piece.notation == 'K' and piece.color == color:
                     king = piece
-        if king.get_valid_moves(self) == []: 
-            if not(self.is_in_check(color)):
-             for piece in pieces :
-                if piece.color==color:
-                    moves_p.append(piece.get_valid_moves(self))
-            if len(moves_p) == 0:
-                output=True
-        return output
-
+         for piece in pieces :
+             if piece.color==color:
+              if piece.get_valid_moves(self)!=[] :
+                return False
+         if king.get_valid_moves(self) == []: 
+                 return True
+         return False
+     
+    def draw_captures(self, display):
+        # Position de départ pour la première pièce
+        start_x = 700
+        start_x_w = 900
+        start_y = 10
         
+        # Taille des pièces
+        piece_size = (50, 50)
+        for i in range(len(black_eat)):
+            b_piece = black_eat[i]
+            match b_piece:
+                case ' ':
+                    pawn = pygame.image.load('data/images/w_pawn.png')
+                    pawn = pygame.transform.scale(pawn, piece_size)
+                    display.blit(pawn, (start_x, start_y + i * (piece_size[1] + 5)))
+                case 'R':
+                    rook = pygame.image.load('data/images/w_rook.png')
+                    rook = pygame.transform.scale(rook, piece_size)
+                    display.blit(rook, (start_x, start_y + i * (piece_size[1] + 5)))
+                case 'N':
+                    knight = pygame.image.load('data/images/w_knight.png')
+                    knight = pygame.transform.scale(knight, piece_size)
+                    display.blit(knight, (start_x, start_y + i * (piece_size[1] + 5)))
+                case 'B':
+                    bishop = pygame.image.load('data/images/w_bishop.png')
+                    bishop = pygame.transform.scale(bishop, piece_size)
+                    display.blit(bishop, (start_x, start_y + i * (piece_size[1] + 5)))
+                case 'Q':
+                    queen = pygame.image.load('data/images/w_queen.png')
+                    queen = pygame.transform.scale(queen, piece_size)
+                    display.blit(queen, (start_x, start_y + i * (piece_size[1] + 5)))
+        
+        for i in range(len(white_eat)):
+            w_piece = white_eat[i]
+            match w_piece:
+                case ' ':
+                    pawn = pygame.image.load('data/images/b_pawn.png')
+                    pawn = pygame.transform.scale(pawn, piece_size)
+                    display.blit(pawn, (start_x_w, start_y + i * (piece_size[1] + 5)))
+                case 'R':
+                    rook = pygame.image.load('data/images/b_rook.png')
+                    rook = pygame.transform.scale(rook, piece_size)
+                    display.blit(rook, (start_x_w, start_y + i * (piece_size[1] + 5)))
+                case 'N':
+                    knight = pygame.image.load('data/images/b_knight.png')
+                    knight = pygame.transform.scale(knight, piece_size)
+                    display.blit(knight, (start_x_w, start_y + i * (piece_size[1] + 5)))
+                case 'B':
+                    bishop = pygame.image.load('data/images/b_bishop.png')
+                    bishop = pygame.transform.scale(bishop, piece_size)
+                    display.blit(bishop, (start_x_w, start_y + i * (piece_size[1] + 5)))
+                case 'Q':
+                    queen = pygame.image.load('data/images/b_queen.png')
+                    queen = pygame.transform.scale(queen, piece_size)
+                    display.blit(queen, (start_x_w, start_y + i * (piece_size[1] + 5)))
+    
+
+    def Calcul_points(self):
+        white_points = 0
+        black_points = 0
+        for i in range(len(white_eat)):
+            if white_eat[i]==' ':
+                white_points += 1
+            elif white_eat[i] =='N':
+                white_points += 3
+            elif white_eat[i] =='B':
+                white_points += 3
+            elif white_eat[i] =='R':
+                white_points += 5
+            elif white_eat[i] =='Q':
+                white_points += 9		
+        for i in range(len(black_eat)):
+            if black_eat[i]==' ':
+                black_points += 1
+            elif black_eat[i] =='N':
+                black_points += 3
+            elif black_eat[i] =='B':
+                black_points += 3
+            elif black_eat[i] =='R':
+                black_points += 5
+            elif black_eat[i] =='Q':
+                black_points += 9	
+        return white_points,black_points
+    
+    def draw_points(self, display):
+        wh,blc = self.Calcul_points()
+        points_w = "points for white :"+ str(wh) 
+        points_b = "points for black :"+ str(blc)
+        font = pygame.font.Font(None, 20)
+        points_surfaces_white = font.render(points_w, True, (255,255,255))
+        points_surfaces_black = font.render(points_b, True,  (255,255,255))
+        display.blit(points_surfaces_black, (1000, 650))
+        display.blit(points_surfaces_white, (1000, 680))
+        
+    def draw_turns(self, display):
+        font = pygame.font.Font(None, 40)
+        turn_text = font.render(self.turn +" to move", True, (255,255,255))
+        display.blit(turn_text,(790, 660) )
